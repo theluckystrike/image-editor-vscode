@@ -1,0 +1,29 @@
+body { margin: 0; padding: 12px 18px 24px; color: var(--vscode-foreground); background: var(--vscode-editor-background); font-family: var(--vscode-font-family); font-size: var(--vscode-font-size, 13px); }
+h2 { font-size: 1.3em; font-weight: 600; margin: 4px 0 8px; }
+.muted { opacity: 0.75; margin: 4px 0; }
+.error { color: var(--vscode-errorForeground); }
+button { font: inherit; color: var(--vscode-button-secondaryForeground, var(--vscode-foreground)); background: var(--vscode-button-secondaryBackground, rgba(128,128,128,0.18)); border: 1px solid transparent; border-radius: 3px; padding: 3px 10px; cursor: pointer; }
+button:hover { background: var(--vscode-button-secondaryHoverBackground, rgba(128,128,128,0.3)); }
+button.on, button.primary { color: var(--vscode-button-foreground); background: var(--vscode-button-background); }
+button:disabled { opacity: 0.5; cursor: default; }
+input { font: inherit; }
+.prog { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+progress { width: 320px; }
+.summary { font-weight: 600; }
+table.rows { border-collapse: collapse; width: 100%; margin-top: 8px; }
+table.rows th, table.rows td { text-align: left; padding: 3px 10px 3px 0; border-bottom: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.25)); font-variant-numeric: tabular-nums; }
+table.rows th { font-weight: 600; }
+tr.bad td { color: var(--vscode-errorForeground); }
+.side { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0; }
+.side[hidden] { display: none; }
+.side figure { margin: 0; flex: 1 1 380px; min-width: 0; }
+.side canvas, .side img { max-width: 100%; height: auto; display: block; box-shadow: 0 0 0 1px rgba(128,128,128,0.35); }
+.side figcaption { margin-top: 4px; opacity: 0.85; }
+.ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 8px 0; }
+.ctl .f { display: inline-flex; align-items: center; gap: 6px; }
+.stats { font-weight: 600; }
+.cstage { margin-top: 8px; }
+.cstage canvas { max-width: 100%; height: auto; display: block; box-shadow: 0 0 0 1px rgba(128,128,128,0.35); }
+.cstage.stack { display: grid; }
+.cstage.stack canvas { grid-area: 1 / 1; }
+.boxes { font-variant-numeric: tabular-nums; }

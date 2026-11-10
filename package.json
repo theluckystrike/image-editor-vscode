@@ -1,0 +1,268 @@
+{
+  "name": "zovo-image-editor",
+  "displayName": "Image Editor & Image Resizer (Crop, Annotate, Convert)",
+  "description": "Image editor and image resizer for VS Code: crop, resize, rotate, straighten, annotate (arrows, boxes, text, numbered steps), blur or pixelate, and convert PNG, JPEG, WebP, GIF and BMP files with Undo, Save and Save As. Works offline, no account.",
+  "version": "0.1.0",
+  "publisher": "zovo",
+  "license": "MIT",
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#1B2A4A",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theluckystrike/image-editor-vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/theluckystrike/image-editor-vscode/issues"
+  },
+  "homepage": "https://github.com/theluckystrike/image-editor-vscode#readme",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "image editor",
+    "image resizer",
+    "image resize",
+    "resize image",
+    "image crop",
+    "crop image",
+    "image annotate",
+    "annotate screenshot",
+    "screenshot editor",
+    "image converter",
+    "photo editor",
+    "paint",
+    "image compress",
+    "image compare",
+    "png",
+    "jpeg",
+    "webp",
+    "crop",
+    "resize",
+    "annotate",
+    "redact",
+    "blur",
+    "screenshot",
+    "convert",
+    "rotate"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": true
+  },
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "imageEditor.edit",
+        "displayName": "Image Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.png"
+          },
+          {
+            "filenamePattern": "*.jpg"
+          },
+          {
+            "filenamePattern": "*.jpeg"
+          },
+          {
+            "filenamePattern": "*.webp"
+          },
+          {
+            "filenamePattern": "*.bmp"
+          },
+          {
+            "filenamePattern": "*.gif"
+          }
+        ],
+        "priority": "option"
+      }
+    ],
+    "commands": [
+      {
+        "command": "imageEditor.open",
+        "title": "Edit Image",
+        "category": "Image Editor",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "imageEditor.openSample",
+        "title": "Open a sample screenshot",
+        "category": "Image Editor"
+      },
+      {
+        "command": "imageEditor.openWalkthrough",
+        "title": "Get started",
+        "category": "Image Editor"
+      },
+      {
+        "command": "imageEditor.saveAs",
+        "title": "Save a copy as PNG, JPEG, WebP or BMP",
+        "category": "Image Editor"
+      },
+      {
+        "command": "imageEditor.pasteAsNewFile",
+        "title": "Paste an image from the clipboard as a new file",
+        "category": "Image Editor"
+      },
+      {
+        "command": "imageEditor.batch",
+        "title": "Batch resize and convert a folder (Pro)",
+        "category": "Image Editor"
+      },
+      {
+        "command": "imageEditor.compress",
+        "title": "Compress to a target size (Pro)",
+        "category": "Image Editor"
+      },
+      {
+        "command": "imageEditor.compare",
+        "title": "Compare two images (Pro)",
+        "category": "Image Editor"
+      },
+      {
+        "command": "imageEditor.supportDeveloper",
+        "title": "Support the developer",
+        "category": "Image Editor"
+      },
+      {
+        "command": "imageEditor.moreViewers",
+        "title": "More free viewers",
+        "category": "Image Editor"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "imageEditor.open",
+          "when": "activeCustomEditorId == 'imagePreview.previewEditor'",
+          "group": "navigation@10"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "imageEditor.open",
+          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(png|jpe?g|webp|bmp|gif)$/i",
+          "group": "navigation@40"
+        },
+        {
+          "command": "imageEditor.compare",
+          "when": "!explorerResourceIsFolder && config.imageEditor.showProTools && resourceExtname =~ /^\\.(png|jpe?g|webp|bmp|gif)$/i",
+          "group": "7_modification@40"
+        },
+        {
+          "command": "imageEditor.compress",
+          "when": "config.imageEditor.showProTools && (explorerResourceIsFolder || resourceExtname =~ /^\\.(png|jpe?g|webp|bmp|gif)$/i)",
+          "group": "7_modification@41"
+        },
+        {
+          "command": "imageEditor.batch",
+          "when": "explorerResourceIsFolder && config.imageEditor.showProTools",
+          "group": "7_modification@42"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "imageEditor.batch",
+          "when": "config.imageEditor.showProTools"
+        },
+        {
+          "command": "imageEditor.compress",
+          "when": "config.imageEditor.showProTools"
+        },
+        {
+          "command": "imageEditor.compare",
+          "when": "config.imageEditor.showProTools"
+        },
+        {
+          "command": "imageEditor.saveAs",
+          "when": "activeCustomEditorId == 'imageEditor.edit'"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Image Editor",
+      "properties": {
+        "imageEditor.jpegQuality": {
+          "type": "number",
+          "default": 92,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "JPEG quality (1-100) used when you save a .jpg or .jpeg file."
+        },
+        "imageEditor.webpQuality": {
+          "type": "number",
+          "default": 90,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "WebP quality (1-100) used when you save a .webp file."
+        },
+        "imageEditor.showProTools": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Batch resize, Compress and Compare buttons (Zovo Pro tools, 3 free tries each). Turn off to hide them."
+        },
+        "imageEditor.showSupportLinks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the small Rate, More free viewers and support links at the bottom of the editor."
+        },
+        "imageEditor.askForRating": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ask once, after a few days of use, whether you want to rate the extension. Never after an error."
+        }
+      }
+    },
+    "walkthroughs": [
+      {
+        "id": "imageEditor.start",
+        "title": "Image Editor & Image Resizer",
+        "description": "Crop, resize, mark up and convert images without leaving VS Code.",
+        "steps": [
+          {
+            "id": "open",
+            "title": "Open an image in the editor",
+            "description": "Images still open in VS Code's own preview. Click Edit Image at the top right of the preview, or right-click a .png, .jpg, .webp, .gif or .bmp file and pick Edit Image.\n[Open a sample screenshot](command:imageEditor.openSample)\n[Edit an image...](command:imageEditor.open)",
+            "media": {
+              "markdown": "walkthrough/open.md"
+            }
+          },
+          {
+            "id": "markup",
+            "title": "Crop, resize and mark up",
+            "description": "Crop with a fixed ratio, resize in pixels or percent, add arrows, boxes, text and numbered steps, and blur or pixelate anything private. Undo and Redo work as in any editor.\n[Open a sample screenshot](command:imageEditor.openSample)",
+            "media": {
+              "markdown": "walkthrough/markup.md"
+            }
+          },
+          {
+            "id": "save",
+            "title": "Save or convert",
+            "description": "Save keeps the format (JPEG and WebP quality are settings). Save As, or Save a copy, writes PNG, JPEG, WebP or BMP.\n[Save a copy as...](command:imageEditor.saveAs)",
+            "media": {
+              "markdown": "walkthrough/save.md"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node scripts/test.js",
+    "samples": "node scripts/make_samples.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "~1.90.0"
+  }
+}

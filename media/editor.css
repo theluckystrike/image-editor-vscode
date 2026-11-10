@@ -1,0 +1,48 @@
+html, body { height: 100%; }
+body { margin: 0; padding: 0; color: var(--vscode-foreground); background: var(--vscode-editor-background); font-family: var(--vscode-font-family); font-size: var(--vscode-font-size, 13px); overflow: hidden; }
+#app { display: flex; flex-direction: column; height: 100vh; }
+.loading, .err { padding: 24px; }
+.err h2 { margin: 0 0 8px; font-size: 1.3em; font-weight: 600; }
+.err p { margin: 0; max-width: 70ch; line-height: 1.5; }
+.bar { display: flex; flex-wrap: wrap; gap: 4px 10px; padding: 6px 8px; border-bottom: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.35)); background: var(--vscode-editorWidget-background, transparent); }
+.grp { display: flex; flex-wrap: wrap; gap: 2px; align-items: center; }
+.grp + .grp { padding-left: 10px; border-left: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.35)); }
+.grp.pro { margin-left: auto; }
+.grp[hidden] { display: none; }
+button { font: inherit; color: var(--vscode-button-secondaryForeground, var(--vscode-foreground)); background: var(--vscode-button-secondaryBackground, rgba(128,128,128,0.18)); border: 1px solid transparent; border-radius: 3px; padding: 3px 8px; cursor: pointer; white-space: nowrap; }
+button:hover { background: var(--vscode-button-secondaryHoverBackground, rgba(128,128,128,0.3)); }
+button:focus-visible { outline: 1px solid var(--vscode-focusBorder); outline-offset: 1px; }
+button.on { color: var(--vscode-button-foreground); background: var(--vscode-button-background); }
+button.primary { color: var(--vscode-button-foreground); background: var(--vscode-button-background); }
+button.primary:hover { background: var(--vscode-button-hoverBackground); }
+.opts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 28px; padding: 4px 8px; border-bottom: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.35)); }
+.opts .lbl { font-weight: 600; }
+.opts .hint { opacity: 0.75; }
+.opts .f { display: inline-flex; align-items: center; gap: 4px; }
+.opts input[type=number] { width: 72px; }
+.opts input[type=range] { width: 140px; }
+.opts .anglen { width: 64px; }
+.opts .pct { min-width: 3.5em; display: inline-block; opacity: 0.8; }
+.opts .custom { width: 64px; }
+.opts .custom[hidden] { display: none; }
+input, select { font: inherit; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-input-border, rgba(128,128,128,0.4)); border-radius: 2px; padding: 2px 4px; }
+input[type=color] { width: 32px; height: 22px; padding: 0 2px; }
+input[type=checkbox] { width: auto; }
+.sw { width: 18px; height: 18px; padding: 0; border: 1px solid rgba(128,128,128,0.6); border-radius: 50%; }
+.notice { padding: 4px 10px; background: var(--vscode-editorInfo-background, rgba(55,148,255,0.12)); border-bottom: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.35)); }
+.notice.warn { background: var(--vscode-inputValidation-warningBackground, rgba(204,167,0,0.2)); }
+.notice[hidden] { display: none; }
+.stage { flex: 1; overflow: auto; position: relative; outline: none; display: grid; place-items: center; min-height: 0; }
+.stage[data-tool=move] .overlay { cursor: grab; }
+.stage[data-tool=text] .overlay { cursor: text; }
+.stage[data-tool=crop] .overlay, .stage[data-tool=blur] .overlay, .stage[data-tool=pixelate] .overlay { cursor: crosshair; }
+.wrap { position: relative; margin: 16px; background-color: #ffffff; background-image: linear-gradient(45deg, #d8d8d8 25%, transparent 25%), linear-gradient(-45deg, #d8d8d8 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #d8d8d8 75%), linear-gradient(-45deg, transparent 75%, #d8d8d8 75%); background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0; box-shadow: 0 0 0 1px rgba(128,128,128,0.35); }
+.wrap canvas { position: absolute; left: 0; top: 0; display: block; }
+.wrap canvas.img { transform-origin: 50% 50%; }
+.overlay { cursor: crosshair; touch-action: none; }
+.textbox { position: absolute; min-width: 160px; background: rgba(0,0,0,0.25); border: 1px dashed #ffffff; font-weight: 600; font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.25; padding: 0 2px; resize: none; overflow: hidden; z-index: 3; }
+.status { display: flex; align-items: center; gap: 16px; padding: 3px 8px; border-top: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.35)); font-size: 12px; }
+.status .xy { opacity: 0.7; min-width: 6em; }
+.status .zoom { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; }
+.status .zl { min-width: 3.5em; text-align: center; }
+.zb { padding: 0 6px; }
