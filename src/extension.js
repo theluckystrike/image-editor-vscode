@@ -265,10 +265,11 @@ function runJob(t, job, bytes) {
 
 async function targetFor(arg) {
   if (arg && arg.scheme) return arg;
-  if (activeDoc) return activeDoc.uri;
+  // the active tab first (the built-in preview or our editor), so a hidden editor of another image never wins
   const tab = vscode.window.tabGroups && vscode.window.tabGroups.activeTabGroup.activeTab;
   const u = tab && tab.input && tab.input.uri;
   if (u && C.IMAGE_RE.test(u.path)) return u;
+  if (activeDoc) return activeDoc.uri;
   return null;
 }
 async function isFolder(uri) { try { return ((await vscode.workspace.fs.stat(uri)).type & vscode.FileType.Directory) !== 0; } catch { return false; } }

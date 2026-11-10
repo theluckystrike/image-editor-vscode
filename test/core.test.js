@@ -209,3 +209,23 @@ test('BMP encoder: a header this reader accepts, pixels bottom-up in BGRA', () =
   assert.strictEqual(C.joinChunks(parts).length, 10);
   assert.strictEqual(C.chunks(new Uint8Array(0), 4).length, 1);
 });
+
+test('chunks of a Node Buffer are plain Uint8Array views that survive VS Code message serialization', () => {
+  // a pooled Buffer with a non-zero byteOffset, as fs and workspace.fs give for small files
+  const pool = Buffer.from('xxxxABCDEFGHIJ', 'latin1');
+  const buf = pool.subarray(4);
+  assert.ok(buf.byteOffset > 0 || buf.buffer.byteLength > buf.length);
+  const parts = C.chunks(buf, 4);
+  for (const p of parts) {
+    assert.strictEqual(Object.getPrototypeOf(p), Uint8Array.prototype, 'not a Buffer');
+    assert.strictEqual(typeof p.toJSON, 'undefined');
+  }
+  // VS Code: JSON.stringify(message, replacer) where the replacer swaps ArrayBuffer views for buffer references
+  const views = [];
+  const json = JSON.stringify({ type: 'chunk', data: parts[0] }, (k, v) => (ArrayBuffer.isView(v) ? { $ref: views.push(v) - 1 } : v));
+  assert.match(json, /"\$ref":0/, 'the chunk reaches the replacer as a view, not as a toJSON object');
+  assert.strictEqual(Buffer.from(C.joinChunks(parts)).toString('latin1'), 'ABCDEFGHIJ');
+  // a Buffer itself would be turned into an object by toJSON before the replacer sees it (the 0.1.0 gate defect)
+  const bad = JSON.stringify({ data: buf }, (k, v) => (ArrayBuffer.isView(v) ? { $ref: 0 } : v));
+  assert.match(bad, /"type":"Buffer"/);
+});

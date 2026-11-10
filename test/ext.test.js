@@ -57,6 +57,7 @@ test('activation and opening images make no network call and show no message; th
     assert.deepStrictEqual([load.format, load.mime, load.orientation, load.pos, load.ops.length, load.notice], ['png', 'image/png', 1, 0, 0, '']);
     const chunks = a.posted.filter((m) => m.type === 'chunk' && m.tx === load.tx);
     assert.deepStrictEqual(Buffer.concat(chunks.map((c) => Buffer.from(c.data))), fs.readFileSync(PNG));
+    for (const c of chunks) assert.strictEqual(Object.getPrototypeOf(c.data), Uint8Array.prototype, 'chunks are posted as plain Uint8Array, never Buffer (toJSON)');
     assert.deepStrictEqual(load.pro.tries, { batch: 3, compress: 3, compare: 3 });
     const j = await openInEditor(s, JPG);
     const lj = j.posted.find((m) => m.type === 'load');

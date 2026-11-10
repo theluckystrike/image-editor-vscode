@@ -427,8 +427,17 @@
     return out;
   }
 
-  /** Split bytes into chunks for postMessage. */
-  function chunks(u8, size) { const out = []; for (let i = 0; i < u8.length; i += size) out.push(u8.subarray(i, Math.min(u8.length, i + size))); if (!out.length) out.push(new Uint8Array(0)); return out; }
+  /**
+   * Split bytes into chunks for postMessage. Each chunk is a plain Uint8Array view, never a Node Buffer: VS Code
+   * serializes webview messages with JSON.stringify, which calls Buffer.prototype.toJSON before its ArrayBuffer
+   * replacer runs, so a Buffer arrives in the webview as { type: 'Buffer', data: [...] } and not as bytes.
+   */
+  function chunks(u8, size) {
+    const out = [];
+    for (let i = 0; i < u8.length; i += size) out.push(new Uint8Array(u8.buffer, u8.byteOffset + i, Math.min(u8.length, i + size) - i));
+    if (!out.length) out.push(new Uint8Array(0));
+    return out;
+  }
   function joinChunks(list) { let n = 0; for (const c of list) n += c.length; const out = new Uint8Array(n); let o = 0; for (const c of list) { out.set(c, o); o += c.length; } return out; }
 
   return {
