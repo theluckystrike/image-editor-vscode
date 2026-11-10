@@ -143,7 +143,8 @@ class Provider {
     doc.webview = panel.webview;
     if (panel.active) activeDoc = doc;
     panel.onDidChangeViewState(() => { if (panel.active) activeDoc = doc; else if (activeDoc === doc && !panel.visible) activeDoc = null; });
-    panel.onDidDispose(() => { if (doc.webview === panel.webview) doc.webview = null; if (activeDoc === doc) activeDoc = null; });
+    const wv = panel.webview; // panel.webview throws once the panel is disposed, so keep the reference
+    panel.onDidDispose(() => { if (doc.webview === wv) doc.webview = null; if (activeDoc === doc) activeDoc = null; });
     panel.webview.onDidReceiveMessage((m) => this.onMessage(doc, m).then(undefined, (e) => vscode.window.showWarningMessage(String(e && e.message || e))));
   }
   async onMessage(doc, m) {
