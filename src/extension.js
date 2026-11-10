@@ -61,7 +61,11 @@ class ImageDocument {
   }
   get name() { return baseName(this.uri); }
   get size() { const s = this.info ? shownSize(this.info) : { w: 0, h: 0 }; return C.sizeAfterOps(s.w, s.h, this.ops.slice(0, this.pos)); }
-  post(m) { return this.webview ? this.webview.postMessage(m).then(undefined, () => false) : Promise.resolve(false); }
+  post(m) {
+    // a closed editor throws "Webview is disposed" at once; that is not an error for us
+    if (!this.webview) return Promise.resolve(false);
+    try { return Promise.resolve(this.webview.postMessage(m)).then(undefined, () => false); } catch { this.webview = null; return Promise.resolve(false); }
+  }
   sendBytes(u8) {
     const tx = `h${++this.seq}`;
     const parts = C.chunks(u8, CHUNK);
@@ -237,7 +241,7 @@ function toolsPanel(title) {
   panel.webview.html = buildHtml({ cspSource: panel.webview.cspSource, scriptUris: [u('imgcore.js'), u('tools.js')], styleUri: u('tools.css'), title, footer: false });
   const t = { panel, rx: new Map(), waits: new Map(), cancelled: false, seq: 0, onCompared: null, onSaveDiff: null };
   t.ready = new Promise((res) => { t.markReady = res; });
-  t.post = (m) => panel.webview.postMessage(m).then(undefined, () => false);
+  t.post = (m) => { try { return Promise.resolve(panel.webview.postMessage(m)).then(undefined, () => false); } catch { return Promise.resolve(false); } };
   t.sendBytes = async (u8) => { const tx = `p${++t.seq}`; const parts = C.chunks(u8, CHUNK); for (let i = 0; i < parts.length; i++) await t.post({ type: 'chunk', tx, seq: i, last: i === parts.length - 1, data: parts[i] }); return tx; };
   t.takeBytes = (tx) => { const list = t.rx.get(tx) || []; t.rx.delete(tx); return C.joinChunks(list.map(toU8)); };
   panel.webview.onDidReceiveMessage((m) => {

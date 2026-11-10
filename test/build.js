@@ -42,9 +42,23 @@ function webpLossy(w, h) { const p = Buffer.alloc(20); p[3] = 0x9d; p[4] = 0x01;
 function webpLossless(w, h) { const p = Buffer.alloc(10); p[0] = 0x2f; p.writeUInt32LE(((w - 1) & 0x3fff) | (((h - 1) & 0x3fff) << 14), 1); return riff('VP8L', p); }
 function webpExtended(w, h, animated) { const p = Buffer.alloc(10); p[0] = animated ? 0x02 : 0; p.writeUIntLE(w - 1, 4, 3); p.writeUIntLE(h - 1, 7, 3); return riff('VP8X', p); }
 
-function gif(w = 20, h = 10, cut = false) {
+/** A GIF with `frames` small frames (an extension block before each); cut: the data stops inside the first frame. */
+function gif(w = 20, h = 10, cut = false, frames = 1) {
+  const head = Buffer.alloc(13); head.write('GIF89a', 0, 'latin1'); head.writeUInt16LE(w, 6); head.writeUInt16LE(h, 8);
+  const parts = [head];
+  for (let i = 0; i < frames; i++) {
+    parts.push(Buffer.from([0x21, 0xf9, 0x04, 0x00, 0x0a, 0x00, 0x00, 0x00])); // graphic control extension
+    const d = Buffer.alloc(10); d[0] = 0x2c; d.writeUInt16LE(1, 5); d.writeUInt16LE(1, 7);
+    parts.push(d, Buffer.from([0x02, 0x02, 0x44, 0x01, 0x00]));
+  }
+  parts.push(Buffer.from([0x3b]));
+  const b = Buffer.concat(parts);
+  return cut ? b.subarray(0, 13 + 8 + 10 + 2) : b;
+}
+/** Only the GIF header and screen descriptor, then the trailer: no picture at all. */
+function gifHeaderOnly(w = 20, h = 10) {
   const b = Buffer.alloc(14); b.write('GIF89a', 0, 'latin1'); b.writeUInt16LE(w, 6); b.writeUInt16LE(h, 8); b[13] = 0x3b;
-  return cut ? b.subarray(0, 12) : b;
+  return b;
 }
 
 function bmp(w = 4, h = 3) {
@@ -53,4 +67,4 @@ function bmp(w = 4, h = 3) {
   return { bytes: Buffer.from(encodeBmp(px, w, h)), px };
 }
 
-module.exports = { png, pngClaim, jpeg, exif, webpLossy, webpLossless, webpExtended, gif, bmp };
+module.exports = { png, pngClaim, jpeg, exif, webpLossy, webpLossless, webpExtended, gif, gifHeaderOnly, bmp };

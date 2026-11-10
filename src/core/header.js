@@ -129,9 +129,37 @@ function webp(b) {
   return { format: 'webp', width, height, truncated: riff + 8 > b.length, animated };
 }
 
+/** Walk the GIF blocks (bounded): frames found (0, 1 or 2 = more than one) and whether the data ends early. */
+function gifFrames(b) {
+  let p = 13;
+  if (b[10] & 0x80) p += 3 * (1 << ((b[10] & 7) + 1));
+  let frames = 0;
+  const skipSub = () => { for (let k = 0; k < 1e7; k++) { if (p >= b.length) return false; const n = b[p]; p += 1 + n; if (n === 0) return true; } return false; };
+  for (let guard = 0; guard < 1e6 && p < b.length; guard++) {
+    const t = b[p];
+    if (t === 0x3b) return { frames, cut: false };
+    if (t === 0x21) { p += 2; if (!skipSub()) return { frames, cut: true }; continue; }
+    if (t === 0x2c) {
+      frames++;
+      if (frames > 1) return { frames, cut: false };
+      if (p + 10 > b.length) return { frames, cut: true };
+      const flags = b[p + 9];
+      p += 10;
+      if (flags & 0x80) p += 3 * (1 << ((flags & 7) + 1));
+      p += 1; // LZW minimum code size
+      if (!skipSub()) return { frames, cut: true };
+      continue;
+    }
+    return { frames, cut: false }; // unknown block: stop here, the browser decides
+  }
+  return { frames, cut: p >= b.length };
+}
+
 function gif(b) {
-  if (b.length < 10) throw new ImageError('TRUNCATED', 'This GIF file is cut short.');
-  return { format: 'gif', width: u16le(b, 6), height: u16le(b, 8), truncated: b[b.length - 1] !== 0x3b, animated: true };
+  if (b.length < 13) throw new ImageError('TRUNCATED', 'This GIF file is cut short.');
+  const { frames, cut } = gifFrames(b);
+  if (frames === 0) throw new ImageError('TRUNCATED', cut ? 'This GIF file is cut short before its first picture, so it could not be decoded.' : 'This GIF file holds no picture, so it could not be decoded.');
+  return { format: 'gif', width: u16le(b, 6), height: u16le(b, 8), truncated: cut || b[b.length - 1] !== 0x3b, animated: frames > 1 };
 }
 
 function bmp(b) {

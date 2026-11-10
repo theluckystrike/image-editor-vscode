@@ -16,7 +16,8 @@ test('real headers: PNG, JPEG, WebP (lossy, lossless, extended), GIF, BMP', () =
   const x = H.sniff(B.webpExtended(20000, 3, true));
   assert.deepStrictEqual([x.width, x.height, x.animated], [20000, 3, true]);
   const g = H.sniff(B.gif(20, 10));
-  assert.deepStrictEqual([g.format, g.width, g.height, g.truncated], ['gif', 20, 10, false]);
+  assert.deepStrictEqual([g.format, g.width, g.height, g.truncated, g.animated], ['gif', 20, 10, false, false]);
+  assert.strictEqual(H.sniff(B.gif(20, 10, false, 3)).animated, true, 'more than one frame is an animation');
   const b = H.sniff(B.bmp(4, 3).bytes);
   assert.deepStrictEqual([b.format, b.width, b.height], ['bmp', 4, 3]);
   assert.strictEqual(H.formatFromName('/a/B.JPEG'), 'jpeg'); assert.strictEqual(H.formatFromName('x.tiff'), '');
@@ -46,7 +47,11 @@ test('hostile: empty, cut, a .png that is HTML, text, random bytes, zero size, a
   assert.strictEqual(H.sniff(B.jpeg(10, 10, { cut: true })).truncated, true);
   assert.strictEqual(H.sniff(B.jpeg(10, 10, { noSos: true, cut: true })).truncated, true);
   assert.throws(() => H.sniff(Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0, 1])), (e) => e.code === 'TRUNCATED', 'segment length 1');
-  assert.strictEqual(H.sniff(B.gif(5, 5, true)).truncated, true);
+  assert.strictEqual(H.sniff(B.gif(5, 5, true)).truncated, true, 'a GIF cut inside its first frame is marked as cut');
+  assert.throws(() => H.sniff(B.gif(5, 5).subarray(0, 12)), (e) => e.code === 'TRUNCATED', 'shorter than the GIF header');
+  assert.throws(() => H.sniff(B.gifHeaderOnly(64, 64)), (e) => e.code === 'TRUNCATED' && /holds no picture/.test(e.message), 'a GIF with no frame');
+  assert.throws(() => H.sniff(B.gif(5, 5).subarray(0, 20)), (e) => e.code === 'TRUNCATED' && /before its first picture/.test(e.message), 'a GIF cut before its first frame');
+  { const loop = Buffer.concat([B.gifHeaderOnly(5, 5).subarray(0, 13), Buffer.alloc(200000, 0x21)]); assert.throws(() => H.sniff(loop), (e) => e.code === 'TRUNCATED', 'endless extension blocks end at the data end'); }
   assert.throws(() => H.sniff(Buffer.from('<!DOCTYPE html><html><script>alert(1)</script></html>')), (e) => e.code === 'NOT_IMAGE' && /an HTML page/.test(e.message));
   assert.throws(() => H.sniff(Buffer.from('just some notes\n')), /a text file/);
   assert.throws(() => H.sniff(Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>')), /SVG/);
