@@ -139,6 +139,36 @@
         "command": "imageEditor.moreViewers",
         "title": "More free viewers",
         "category": "Image Editor"
+      },
+      {
+        "command": "imageEditor.getPro",
+        "title": "Get Zovo Pro (USD 19 once, all 22 Zovo extensions)",
+        "category": "Zovo Pro"
+      },
+      {
+        "command": "imageEditor.payWithPayPal",
+        "title": "Pay for Zovo Pro with PayPal (USD 19, team of 5 USD 59)",
+        "category": "Zovo Pro"
+      },
+      {
+        "command": "imageEditor.unlockWithSponsors",
+        "title": "I already paid: unlock with GitHub Sponsors",
+        "category": "Zovo Pro"
+      },
+      {
+        "command": "imageEditor.enterLicenseKey",
+        "title": "Enter Zovo Pro license key",
+        "category": "Zovo Pro"
+      },
+      {
+        "command": "imageEditor.removeLicense",
+        "title": "Remove Zovo Pro from this editor",
+        "category": "Zovo Pro"
+      },
+      {
+        "command": "imageEditor.payByCard",
+        "title": "Pay for Zovo Pro by card (USD 19)",
+        "category": "Zovo Pro"
       }
     ],
     "menus": {
@@ -253,6 +283,14 @@
             "media": {
               "markdown": "walkthrough/save.md"
             }
+          },
+          {
+            "id": "zovo-related",
+            "title": "Files that often come with images",
+            "description": "If your project also has SVG images or binary files, these free Zovo extensions open them. A link opens the extension page, and you choose there whether to install it.\n[SVG Viewer](command:extension.open?%5B%22zovo.zovo-svg-viewer%22%5D)\n[Hex Viewer](command:extension.open?%5B%22zovo.zovo-hex-viewer%22%5D)",
+            "media": {
+              "markdown": "walkthrough/related.md"
+            }
           }
         ]
       }
@@ -264,5 +302,8 @@
   },
   "devDependencies": {
     "@types/vscode": "~1.90.0"
+  },
+  "sponsor": {
+    "url": "https://github.com/sponsors/theluckystrike/sponsorships?tier_id=679878"
   }
 }

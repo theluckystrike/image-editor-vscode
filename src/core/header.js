@@ -83,7 +83,7 @@ function png(b) {
 }
 
 function jpeg(b) {
-  let off = 2, segs = 0, width = 0, height = 0, orientation = 1, orientationPos = -1, sos = false;
+  let off = 2, segs = 0, width = 0, height = 0, orientation = 1, orientationPos = -1, orientationLe = true, sos = false;
   while (off + 4 <= b.length && segs++ < 100000) {
     if (b[off] !== 0xff) { off++; continue; }
     const m = b[off + 1];

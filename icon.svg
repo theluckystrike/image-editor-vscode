@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect x="8" y="8" width="240" height="240" rx="40" fill="#14202B"/>
+  <rect x="8" y="8" width="240" height="240" rx="40" fill="none" stroke="#2F4A63" stroke-width="4"/>
+  <!-- a photo: sky, sun, two hills -->
+  <rect x="52" y="64" width="152" height="116" rx="6" fill="#1C3A5A"/>
+  <circle cx="160" cy="98" r="14" fill="#F5A524"/>
+  <path d="M52 168 L100 118 L136 152 L162 128 L204 168 L204 174 a6 6 0 0 1 -6 6 H58 a6 6 0 0 1 -6 -6 Z" fill="#30A46C"/>
+  <!-- crop corners -->
+  <path d="M40 76 V52 H64" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M216 168 V192 H192" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- an arrow annotation and a step badge -->
+  <path d="M84 222 L130 160" stroke="#E5484D" stroke-width="9" stroke-linecap="round"/>
+  <path d="M138 148 L112 162 L130 176 Z" fill="#E5484D" stroke="#E5484D" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="190" cy="214" r="20" fill="#3794FF" stroke="#FFFFFF" stroke-width="3"/>
+  <text x="190" y="223" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#FFFFFF">1</text>
+</svg>

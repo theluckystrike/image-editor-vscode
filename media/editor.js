@@ -468,6 +468,7 @@
     const r = el.overlay.getBoundingClientRect();
     return { x: (e.clientX - r.left) / st.zoom, y: (e.clientY - r.top) / st.zoom };
   }
+  function capture(e) { try { el.overlay.setPointerCapture(e.pointerId); } catch { /* synthetic events have no active pointer */ } }
   function wireStage() {
     let space = false;
     el.stage.addEventListener('wheel', (e) => { if (!st.cur || !(e.ctrlKey || e.metaKey)) return; e.preventDefault(); zoomBy(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX, e.clientY); }, { passive: false });
@@ -481,18 +482,18 @@
       el.stage.focus({ preventScroll: true });
       const p = imgPoint(e);
       const t = st.tool;
-      if (t === 'move' || space || e.button === 1) { st.drag = { pan: true, sx: e.clientX, sy: e.clientY, l: el.stage.scrollLeft, t: el.stage.scrollTop }; el.overlay.setPointerCapture(e.pointerId); return; }
+      if (t === 'move' || space || e.button === 1) { st.drag = { pan: true, sx: e.clientX, sy: e.clientY, l: el.stage.scrollLeft, t: el.stage.scrollTop }; capture(e); return; }
       if (t === 'text') { e.preventDefault(); openTextBox(p); return; }
       if (t === 'step') { commit({ kind: 'step', x: p.x, y: p.y, n: C.nextStep(st.hist.applied()), color: st.color, size: Math.round(st.textSize * 0.6) }); return; }
       if (t === 'crop') {
         const r = st.crop;
         const inside = r && p.x > r.x && p.y > r.y && p.x < r.x + r.w && p.y < r.y + r.h && !(r.w === st.w && r.h === st.h);
         st.drag = inside ? { move: true, ox: p.x - r.x, oy: p.y - r.y } : { x0: p.x, y0: p.y };
-        el.overlay.setPointerCapture(e.pointerId); return;
+        capture(e); return;
       }
       if (t === 'straighten' || t === 'adjust' || t === 'resize') return;
       st.drag = { x0: p.x, y0: p.y, pts: [p.x, p.y] };
-      el.overlay.setPointerCapture(e.pointerId);
+      capture(e);
     });
     el.overlay.addEventListener('pointermove', (e) => {
       const d = st.drag;
